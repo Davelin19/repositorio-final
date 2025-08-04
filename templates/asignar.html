@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Asignar Roles - Repositorio SENA</title>
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+  <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+        <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="{{ url_for('index') }}">Inicio</a></li>
+          <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+          {% if usuario['rol_id'] == 3 %}
+          <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+          {% endif %}
+          <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
+          <li class="dropdown"><a href="#"><span>Gestión</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="{{ url_for('almacenamiento') }}">Almacenamiento</a></li>
+              <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
+            </ul>
+          </li>
+          <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <!-- Imagen de perfil -->
+      <div class="profile-menu-wrapper position-relative">
+        <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}"
+             alt="Perfil"
+             class="profile-img"
+             id="profileToggle"
+             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;">
+        <div id="profileMenu" class="profile-menu d-none">
+          <ul class="list-unstyled m-0">
+            <li><a href="{{ url_for('perfil') }}">Mi perfil</a></li>
+            <li><a href="{{ url_for('configuracion') }}">Configuración</a></li>
+            <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            {% if usuario['rol_id'] == 3 %}
+              <li><a href="{{ url_for('asignar') }}">Asignar roles</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header><!-- End Header -->
+
+  <style>
+    body, html {
+      height: 100%;
+    }
+    main.main {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 80px;
+    }
+    .user-table-wrapper {
+      max-width: 1000px;
+      width: 100%;
+      padding: 20px;
+    }
+    .user-table-card {
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      background-color: #ffffff;
+      padding: 30px;
+    }
+    .user-table-card h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #002a45;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .table thead th {
+      background-color: #002a45;
+      color: #ffffff;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .table tbody tr:hover {
+      background-color: #f2f9ff;
+    }
+    .table td {
+      vertical-align: middle;
+      font-size: 0.95rem;
+    }
+    .btn-sm i {
+      margin-right: 4px;
+    }
+    .table tfoot td {
+      background-color: transparent;
+      border-top: none;
+      padding-top: 20px;
+    }
+    .table tfoot .btn {
+      padding: 8px 20px;
+    }
+    @media (max-width: 768px) {
+      .user-table-card {
+        padding: 20px 10px;
+      }
+      .user-table-card h2 {
+        font-size: 1.5rem;
+      }
+      .table-responsive {
+        overflow-x: auto;
+      }
+    }
+
+  .btn-sm btn-primary{
+    background-color: #ffffff;
+    color: #002a45;
+  }
+  </style>
+</head>
+
+<body>
+  <!-- Header omitido para brevedad -->
+  <main id="main" class="main">
+    <div class="user-table-wrapper">
+      <div class="user-table-card">
+        <h2>Lista de Usuarios</h2>
+        <div class="table-responsive">
+          <table class="table table-hover text-center align-middle">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Tipo de Documento</th>
+                <th>Rol Actual</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in usuarios %}
+              <tr>
+                <td>{{ user.nombre }} {{ user.apellido }}</td>
+                <td>{{ user.tipo_identificacion }}</td>
+                <td>{{ user.rol_nombre }}</td>
+                <td>
+                  <div class="d-flex justify-content-center gap-2 flex-wrap">
+                    <button type="button" class="btn btn-sm btn-primary"
+                    style="color: #ffffff;"
+                    data-bs-toggle="modal"
+                    data-bs-target="#cambiarRolModal"
+                    data-user-id="{{ user.id }}"
+                    data-user-name="{{ user.nombre }} {{ user.apellido }}">
+              <i class="bi bi-person-badge"></i> Cambiar Rol
+            </button>            
+                    <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#cambiarDocumentoModal" data-user-id="{{ user.id }}" data-user-name="{{ user.nombre }} {{ user.apellido }}">
+                      <i class="bi bi-file-earmark-text"></i> Cambiar Tipo de Documento
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" class="text-end">
+                  <a href="{{ url_for('index') }}" class="btn btn-outline-primary mt-3">
+                    <i class="bi bi-arrow-left"></i> Volver
+                  </a>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+            <!-- Modal para cambiar rol -->
+            <div class="modal fade" id="cambiarRolModal" tabindex="-1" aria-labelledby="cambiarRolModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="cambiarRolModalLabel">Cambiar Rol</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="cambiarRolForm" action="{{ url_for('cambiar_rol') }}" method="POST">
+                      <input type="hidden" id="userId" name="usuario_id" value="">
+                      <div class="mb-3">
+                        <label for="userName" class="form-label">Usuario</label>
+                        <input type="text" class="form-control" id="userName" readonly>
+                      </div>
+                      <div class="mb-3">
+                        <label for="rol" class="form-label">Nuevo Rol</label>
+                        <select class="form-select" id="rol" name="rol_id" required>
+                          <option value="">Seleccionar rol...</option>
+                          {% for rol in roles %}
+                          <option value="{{ rol.id }}">{{ rol.nombre }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="cambiarRolForm" class="btn btn-primary">Guardar Cambios</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Modal para cambiar tipo de documento -->
+            <div class="modal fade" id="cambiarDocumentoModal" tabindex="-1" aria-labelledby="cambiarDocumentoModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="cambiarDocumentoModalLabel">Cambiar Tipo de Documento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="cambiarDocumentoForm" action="{{ url_for('cambiar_tipo_documento') }}" method="POST">
+                      <input type="hidden" id="docUserId" name="usuario_id" value="">
+                      <div class="mb-3">
+                        <label for="docUserName" class="form-label">Usuario</label>
+                        <input type="text" class="form-control" id="docUserName" readonly>
+                      </div>
+                      <div class="mb-3">
+                        <label for="tipo_documento" class="form-label">Nuevo Tipo de Documento</label>
+                        <select class="form-select" id="tipo_documento" name="tipo_documento" required>
+                          <option value="">Seleccionar tipo...</option>
+                          <option value="CC">Cédula de Ciudadanía</option>
+                          <option value="TI">Tarjeta de Identidad</option>
+                          <option value="CE">Cédula de Extranjería</option>
+                          <option value="PA">Pasaporte</option>
+                        </select>                        
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="cambiarDocumentoForm" class="btn btn-success">Guardar Cambios</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+          </div> <!-- col-12 -->
+        </div> <!-- row -->
+      </div> <!-- container -->
+    </section>
+  </main>
+  
+  <!-- FOOTER + JS -->
+  <footer id="footer" class="footer mt-5">
+    <div class="container text-center">
+      <div class="copyright">
+        &copy; <strong><span>Repositorio SENA</span></strong>. Todos los derechos reservados
+      </div>
+    </div>
+  </footer>
+  
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Modal cambio de rol
+      const modalButton = document.querySelectorAll('[data-bs-target="#cambiarRolModal"]');
+      const userIdInput = document.getElementById('userId');
+      const userNameInput = document.getElementById('userName');
+      modalButton.forEach(button => {
+        button.addEventListener('click', function () {
+          userIdInput.value = this.dataset.userId;
+          userNameInput.value = this.dataset.userName;
+        });
+      });
+  
+      // Modal cambio de documento
+      const docModalButtons = document.querySelectorAll('[data-bs-target="#cambiarDocumentoModal"]');
+      const docUserId = document.getElementById('docUserId');
+      const docUserName = document.getElementById('docUserName');
+      docModalButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          docUserId.value = this.dataset.userId;
+          docUserName.value = this.dataset.userName;
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

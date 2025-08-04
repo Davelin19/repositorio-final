@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Estadísticas - Repositorio SENA</title>
+
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header d-flex align-items-center fixed-top">
+        <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+    
+          <a href="{{ url_for('index') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+            <!-- Uncomment the line below if you also wish to use an image logo -->
+            <!-- <img src="/assets/img/logo.webp" alt=""> -->
+            <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
+          </a>
+    
+          <nav id="navmenu" class="navmenu">
+            <ul>
+              <li><a href="{{ url_for('index') }}" class="active">Inicio</a></li>
+              <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+              <li><a href="{{ url_for('estadisticas') }}">Estadisticas</a></li>
+              <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
+              <li class="dropdown"><a href="#"><span>Gestion</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <ul>
+                  <li><a href="{{ url_for('almacenamiento') }}">almacenamiento</a></li>
+                  <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
+
+                </ul>
+              </li>
+              <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+            </ul>
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+          </nav>
+<!--imagenes-->
+      <div class="profile-menu-wrapper position-relative">
+        <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}"
+             alt="Perfil"
+             class="profile-img"
+             id="profileToggle"
+             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;">
+      
+        <div id="profileMenu" class="profile-menu d-none">
+          <ul class="list-unstyled m-0">
+            <li><a href="{{ url_for('perfil') }}">Mi perfil</a></li>
+            <li><a href="{{ url_for('configuracion') }}">Configuración</a></li>
+            <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            {% if usuario['rol_id'] == 3 %}
+              <li><a href="{{ url_for('asignar') }}">Asignar roles</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div> 
+<!--fin imagenes-->
+      </header>
+
+    <main id="main" class="main-page">
+        <div class="container py-5">
+            <h1 class="text-center mb-5">Estadísticas del Repositorio</h1>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3>Total de Documentos</h3>
+                            <div id="total-documents" class="display-4">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3>Usuarios Registrados</h3>
+                            <div id="total-users" class="display-4">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3>Descargas Último Mes</h3>
+                            <div id="monthly-downloads" class="display-4">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="mb-4">Estadísticas Detalladas</h3>
+                            <div class="chart-container" style="height: 400px; position: relative;">
+                                <canvas id="statsChart"></canvas>
+                                <div id="detailed-stats" class="mt-5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<!-- Vendor JS Files -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/purecounter/purecounter_vanilla.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"></script>
+
+<!-- Template Main JS File -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+
+<script>
+    let statsChart;
+
+    function initChart() {
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        statsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Usuarios Totales', 'Descargas Mensuales'],
+                datasets: [{
+                    label: 'Valores',
+                    data: [0, 0],
+                    backgroundColor: [
+                        'rgba(227, 161, 39, 0.8)',
+                        'rgba(0, 48, 77, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(227, 161, 39, 1)',
+                        'rgba(0, 48, 77, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            callback: function(value) {
+                                return value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Estadísticas Detalladas' }
+                }
+            }
+        });
+    }
+
+    async function fetchStatistics() {
+        try {
+            const response = await fetch('/api/estadisticas');
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            
+            const data = await response.json();
+
+            // Actualizar contadores
+            document.getElementById('total-documents').textContent = data.total_documents.toLocaleString();
+            document.getElementById('total-users').textContent = data.total_users.toLocaleString();
+            document.getElementById('monthly-downloads').textContent = data.monthly_downloads.toLocaleString();
+
+            // Actualizar gráfica
+            statsChart.data.datasets[0].data = [
+                data.total_users,
+                data.monthly_downloads
+            ];
+            statsChart.update();
+
+            // Si tienes estadísticas detalladas
+            if (data.detailed_stats && document.getElementById('detailed-stats')) {
+                const detailedStats = document.getElementById('detailed-stats');
+                let statsHTML = '<div class="row">';
+                data.detailed_stats.forEach(stat => {
+                    statsHTML += `
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">${stat.title}</h5>
+                                    <p class="card-text">${stat.value}</p>
+                                    <p class="card-text text-muted">${stat.description}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                statsHTML += '</div>';
+                detailedStats.innerHTML = statsHTML;
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initChart();
+        fetchStatistics();
+    });
+</script>
+</body>
+</html>
+
+  

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Registro - Repositorio SENA</title>
+
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+    <style>
+        .registration-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 50px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .registration-card h2 {
+            color: #00304D;
+            margin-bottom: 30px;
+        }
+        .registration-card .form-label {
+            color: #666;
+        }
+        .registration-card .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .registration-card .form-control:focus {
+            border-color: #00304D;
+            box-shadow: 0 0 0 0.2rem rgba(0, 48, 77, 0.25);
+        }
+        .registration-card .btn-primary {
+            background-color: #00304D;
+            border-color: #00304D;
+            padding: 15px 0;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 200px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+        .registration-card .btn-primary:hover {
+            background-color: #002033;
+            border-color: #002033;
+            transform: translateY(-2px);
+        }
+        .registration-card .btn-primary span {
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            display: block;
+        }
+        .registration-card .section-title {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #00304D;
+        }
+        .registration-card .section-title h4 {
+            color: #00304D;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="page-register">
+
+    <!-- Header -->
+    <header id="header" class="header d-flex align-items-center fixed-top">
+        <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+            <a href="{{ url_for('index') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+                <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
+            </a>
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="{{ url_for('index') }}" class="active">Inicio</a></li>
+                    <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+                    {% if usuario['rol_id'] == 3 %}
+                    <li><a href="{{ url_for('estadisticas') }}">Estadisticas</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('equipo') }}">Equipo</a></li> 
+                    <li class="dropdown"><a href="#"><span>Gestion</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{{ url_for('almacenamiento') }}">almacenamiento</a></li>
+                            <li class="dropdown"><a href="#"><span>Consultar</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                                <ul>
+                                    <li><a href="#">Títulos</a></li>
+                                    <li><a href="#">Autores</a></li>
+                                    <li><a href="#">Temas</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="#contact">Contacto</a></li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+            <!--imagenes-->
+      <div class="profile-menu-wrapper position-relative">
+        <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}"
+             alt="Perfil"
+             class="profile-img"
+             id="profileToggle"
+             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;">
+      
+        <div id="profileMenu" class="profile-menu d-none">
+          <ul class="list-unstyled m-0">
+            <li><a href="{{ url_for('perfil') }}">Mi perfil</a></li>
+            <li><a href="{{ url_for('configuracion') }}">Configuración</a></li>
+            <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            {% if usuario['rol_id'] == 3 %}
+              <li><a href="{{ url_for('asignar') }}">Asignar roles</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div> 
+
+        </div>
+    </header>
+
+    <main id="main" class="main-page">
+        <div class="container">
+            <div class="registration-card">
+                <h2 class="text-center mb-4">Registro de Usuario</h2>
+                <form id="registrationForm" class="row g-3" action="{{ url_for('registro') }}" method="POST">
+                    <!-- Información Personal -->
+                    <div class="col-12">
+                        <h4 class="mb-3 section-title">Información Personal</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="apellido" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="apellido" name="apellido" required>
+                    </div>
+                    <div class="col-12">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="col-12">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="telefono" name="telefono">
+                    </div>
+                
+                    <!-- Información Académica -->
+                    <div class="col-12 mt-4">
+                        <h4 class="mb-3 section-title">Información Académica</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="institucion" class="form-label">Institución</label>
+                        <input type="text" class="form-control" id="institucion" name="institucion" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="programa" class="form-label">Programa</label>
+                        <input type="text" class="form-control" id="programa" name="programa" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tipo_identificacion" class="form-label">Tipo de Identificación</label>
+                        <select class="form-select form-control" id="tipo_identificacion" name="tipo_identificacion" required>
+                            <option value="">tipo de identificación</option>
+                            <option value="cc">Cédula de ciudadanía</option>
+                            <option value="ce">Cédula de extranjería</option>
+                            <option value="ti">Tarjeta de identidad</option>
+                            <option value="pasaporte">Pasaporte</option>
+                            <option value="pep">PEP</option>
+                            <option value="ppt">Permiso por protección temporal</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="numero_identificacion" class="form-label">Número de Identificación</label>
+                        <input type="text" class="form-control" id="numero_identificacion" name="numero_identificacion" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="rol_id" class="form-label">Rol</label>
+                        <select class="form-select form-control" id="role" name="rol_id" required>
+                            <option value="">rol</option>
+                            {% for rol in roles %}
+                                <option value="{{ rol.id }}">{{ rol.nombre }}</option>
+                            {% endfor %}
+                        </select>  
+                    </div>
+                
+                    <!-- Contraseña -->
+                    <div class="col-12 mt-4">
+                        <h4 class="mb-3 section-title">Cuenta de Usuario</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                
+                    <!-- Términos y Condiciones -->
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                Acepto los <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#termsModal">Términos y Condiciones</a>
+                            </label>
+                        </div>
+                    </div>
+                
+                    <!-- Botón de Registro -->
+                    <div class="col-12 mt-4 text-center">
+                        <button type="submit" class="btn btn-primary">
+                            <span>Registrarme</span>
+                        </button>
+                    </div>
+                </form>
+                
+            </div>
+        </div>
+    </main>
+
+    <!-- Vendor JS Files -->
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"></script>
+
+    <!-- Main JS File -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Terms and Conditions Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">Términos y Condiciones</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="accordion" id="termsAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#termsCollapse1">
+                                    Términos del Sitio Web
+                                </button>
+                            </h2>
+                            <div id="termsCollapse1" class="accordion-collapse collapse show">
+                                <div class="accordion-body">
+                                    <p><strong>1. Uso del Sitio</strong></p>
+                                    <p>Al utilizar este sitio web, usted acepta cumplir con todos los términos y condiciones establecidos. Este sitio web es propiedad del Servicio Nacional de Aprendizaje (SENA).</p>
+                                    
+                                    <p><strong>2. Propiedad Intelectual</strong></p>
+                                    <p>Todos los derechos de autor y propiedad intelectual del contenido en este sitio web pertenecen al SENA. No se permite la reproducción, distribución o uso comercial sin autorización previa.</p>
+
+                                    <p><strong>3. Privacidad</strong></p>
+                                    <p>El SENA se compromete a proteger la información personal de los usuarios de acuerdo con su política de privacidad.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#termsCollapse2">
+                                    Términos del SENA
+                                </button>
+                            </h2>
+                            <div id="termsCollapse2" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <p><strong>1. Misión y Visión</strong></p>
+                                    <p>El SENA se compromete a ofrecer educación y formación técnica y tecnológica de alta calidad para el desarrollo del país.</p>
+
+                                    <p><strong>2. Uso de Recursos</strong></p>
+                                    <p>Los recursos y servicios proporcionados a través de este sitio web están sujetos a las políticas y procedimientos del SENA.</p>
+
+                                    <p><strong>3. Responsabilidades</strong></p>
+                                    <p>Los usuarios se comprometen a utilizar los recursos del SENA de manera ética y responsable, respetando las normas y políticas institucionales.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

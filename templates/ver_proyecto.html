@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Proyecto</title>
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #00304D;
+            color: white;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .card-body p {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-primary {
+            background-color: #00304D;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        a {
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-md mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2 class="mb-0">{{ proyecto.titulo }}</h2>
+            </div>
+            <div class="card-body">
+                <p><strong>Autores:</strong> {{ proyecto.autores }}</p>
+                <p><strong>Categoría:</strong> {{ proyecto.categorias }}</p>
+                <p><strong>Fecha de subida:</strong> {{ proyecto.fecha_subida }}</p>
+                <p><strong>Fecha de finalización:</strong> {{ proyecto.fecha_finalizacion }}</p>
+                <p><strong>Competencias:</strong> {{ proyecto.competencias }}</p>
+                <p><strong>Descripción:</strong> {{ proyecto.descripcion }}</p>
+                <p><strong>Palabras clave:</strong> {{ proyecto.palabrasclave }}</p>
+
+                {% if proyecto.enlace_git %}
+                <p><strong>Enlace Git:</strong> 
+                    <a href="{{ proyecto.enlace_git }}" target="_blank" class="text-decoration-none text-primary">
+                        <i class="bi bi-github"></i>{{ proyecto.enlace_git }}
+                    </a>
+                </p>
+                {% endif %}
+
+                {% if proyecto.enlace_drive %}
+                <p><strong>Enlace Drive:</strong> 
+                    <a href="{{ proyecto.enlace_drive }}" target="_blank" class="text-decoration-none text-success">
+                        <i class="bi bi-cloud-arrow-down-fill"></i>{{ proyecto.enlace_drive }}
+                    </a>
+                </p>
+                {% endif %}
+
+                <div class="mt-4 d-flex flex-wrap gap-3">
+                    <!-- ✅ Ruta correcta para descargar el PDF desde la base de datos -->
+                    {% if usuario['rol_id'] == 3 %}
+                    <a href="{{ url_for('ver_pdf', id=proyecto.id) }}" class="btn btn-primary" target="_blank">
+                        <i class="bi bi-file-earmark-pdf"></i> Descargar proyecto   
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('formacion') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left-circle"></i> Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

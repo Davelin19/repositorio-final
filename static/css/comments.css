@@ -1,0 +1,66 @@
+.comment-form {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.comments-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.comment-form .form-label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.comment-form .form-control,
+.comment-form .form-select {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    border-radius: 6px;
+}
+
+.comment-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.comment-form button {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.comment-form button:hover {
+    background: #34495e;
+}
+
+.testimonial-item {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.rating {
+    color: #ffd700;
+    font-size: 1.2rem;
+}
+
+.client-info {
+    color: #2c3e50;
+}
+
+.client-info h6 {
+    color: #2c3e50;
+    font-weight: 600;
+}

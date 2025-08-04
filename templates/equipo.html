@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Equipo - Repositorio SENA</title>
+
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <!-- Header -->
+    <header id="header" class="header d-flex align-items-center fixed-top">
+        <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+            <a href="{{ url_for('index') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+                <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
+            </a>
+            <nav id="navmenu" class="navmenu">      
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+                    {% if usuario['rol_id'] == 3 %}
+                    <li><a href="{{ url_for('estadisticas') }}">Estadisticas</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
+                    <li class="dropdown"><a href="#"><span>Gestion</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{{ url_for('almacenamiento') }}">Almacenamiento</a></li>
+                            <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
+
+                        </ul>
+                    </li>
+                    <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+                    <!--imagenes-->
+      <div class="profile-menu-wrapper position-relative">
+        <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}"
+             alt="Perfil"
+             class="profile-img"
+             id="profileToggle"
+             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;">
+      
+        <div id="profileMenu" class="profile-menu d-none">
+          <ul class="list-unstyled m-0">
+            <li><a href="{{ url_for('perfil') }}">Mi perfil</a></li>
+            <li><a href="{{ url_for('configuracion') }}">Configuración</a></li>
+            <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            {% if usuario['rol_id'] == 3 %}
+              <li><a href="{{ url_for('asignar') }}">Asignar roles</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div> 
+<!--fin imagenes-->
+    </header>
+
+    <main id="main" class="main-page">
+        <div class="container">
+            <div class="page-header py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <h1 class="display-4 mb-4">Equipo de Trabajo</h1>
+                        <p class="lead text-muted mb-4">Nuestro equipo multidisciplinario trabajando juntos para ofrecer la mejor experiencia educativa</p>
+                        <hr class="w-50 mx-auto">
+                    </div>
+                </div>
+            </div>
+            <div class="team-content py-5">
+            
+            <!-- Sección de Dirección General -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h2 class="text-center mb-4">Dirección General</h2>
+                    <div id="directorCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#directorCarousel" data-bs-slide-to="0" class="active"></button>
+                            <button type="button" data-bs-target="#directorCarousel" data-bs-slide-to="1"></button>
+                            <button type="button" data-bs-target="#directorCarousel" data-bs-slide-to="2"></button>
+                        </div>
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="card h-100" style="background-color: #00304D; color: white;">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="member-img me-3">
+                                                <img src="{{ url_for('static',filename='img/person/montesino.jpg') }}" class="img-fluid rounded-circle" alt="" loading="lazy" style="width: 80px; height: 80px; object-fit: cover;">
+                                            </div>
+                                            <div class="member-info">
+                                                <h5 class="mb-1">Jose david montesino</h5>
+                                                <span>Lider de programacion</span>
+                                                <p class="small mb-2">Líder visionario con más de 20 años de experiencia en gestión educativa y desarrollo de proyectos innovadores.</p>
+                                                <div class="social">
+                                                    <a href="#" class="me-2 text-white"><i class="bi bi-facebook"></i></a>
+                                                    <a href="#" class="me-2 text-white"><i class="bi bi-twitter-x"></i></a>
+                                                    <a href="#" class="me-2 text-white"><i class="bi bi-linkedin"></i></a>
+                                                    <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="card h-100" style="background-color: #00304D; color: white;">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="member-img me-3">
+                                                <img src="{{ url_for('static', filename='img/person/Beby.png') }}" class="img-fluid rounded-circle" alt="" loading="lazy" style="width: 80px; height: 80px; object-fit: cover;">
+                                            </div>
+                                            <div class="member-info">
+                                                <h5 class="mb-1">Beverly Romero</h5>
+                                                <span>Lider de proyecto y experta en las TICS</span>
+                                                <p class="small mb-2">Especialista en innovación educativa y TIC, con más de 15 años liderando proyectos digitales y aplicando tecnología para optimizar el aprendizaje.</p>
+                                                <div class="social">
+                                                    <a href="#" class="me-2 text-white"><i class="bi bi-facebook"></i></a>
+                                                    <a href="#" class="me-2 text-white"><i class="bi bi-twitter-x"></i></a>
+                                                    <a href="#" class="me-2 text-white"><i class="bi bi-linkedin"></i></a>
+                                                    <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="card h-100" style="background-color: #00304D; color: white;">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="member-img me-3">
+                                                <img src="{{ url_for('static', filename='img/person/Imagen de WhatsApp 2025-07-10 a las 10.04.27_3d601e33.jpg') }}" class="img-fluid rounded-circle" alt="" loading="lazy" style="width: 80px; height: 80px; object-fit: cover;">
+                                            </div>
+                                            <div class="member-info">
+                                                <h5 class="mb-1">Maira alejandra Diaz</h5>
+                                                <span>Analista y especialista en base de datos</span>
+                                                <p class="small mb-2">Experto en tecnologías educativas y desarrollo de plataformas digitales con más de 10 años de experiencia.</p>
+                                                <div class="social">
+                                                    <a href="#" class="me-2 text-white"><i class="bi bi-facebook"></i></a>
+                                                    <a href="#" class="me-2 text-white"><i class="bi bi-twitter-x"></i></a>
+                                                    <a href="#" class="me-2 text-white"><i class="bi bi-linkedin"></i></a>
+                                                    <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#directorCarousel" data-bs-slide-to="0" class="active"></button>
+                            <button type="button" data-bs-target="#directorCarousel" data-bs-slide-to="1"></button>
+                            <button type="button" data-bs-target="#directorCarousel" data-bs-slide-to="2"></button>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#directorCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#directorCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Coordinación Académica -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h2 class="text-center mb-4">Formación Académica</h2>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="team-member d-flex">
+                                        <div class="member-img me-3">
+                                            <img src="{{ url_for('static', filename='img/person/karina.jpg') }}" class="img-fluid rounded-circle" alt="" loading="lazy">
+                                        </div>
+                                        <div class="member-info flex-grow-1">
+                                            <h4>Karina meza</h4>
+                                            <span> Frontend </span>
+                                            <p>Desarrollador web con experiencia en diseño responsive y experiencia en desarrollo de interfaces de usuario y toda la experiencia del usuario.</p>
+                                            <div class="social">
+                                                <a href="#"><i class="bi bi-facebook"></i></a>
+                                                <a href="#"><i class="bi bi-twitter-x"></i></a>
+                                                <a href="#"><i class="bi bi-linkedin"></i></a>
+                                                <a href="#"><i class="bi bi-youtube"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="team-member d-flex">
+                                        <div class="member-img me-3">
+                                            <img src="{{ url_for('static', filename='img/person/felix.jpg') }}" class="img-fluid rounded-circle" alt="" loading="lazy">
+                                        </div>
+                                        <div class="member-info flex-grow-1">
+                                            <h4>Feliz villero</h4>
+                                            <span>Docente en calidad de software</span>
+                                            <p>profesional que enseña cómo garantizar que el software cumpla con estándares técnicos y funcionales, abordando temas como pruebas,calidad, control de errores.</p>
+                                            <div class="social">
+                                                <a href="#"><i class="bi bi-facebook"></i></a>
+                                                <a href="#"><i class="bi bi-twitter-x"></i></a>
+                                                <a href="#"><i class="bi bi-linkedin"></i></a>
+                                                <a href="#"><i class="bi bi-youtube"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           <!-- Sección de Desarrollo Técnico -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">Desarrollo Técnico</h2>
+        <div class="row g-4 justify-content-center"> <!-- Centrado aquí -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="team-member d-flex">
+                            <div class="member-img me-3">
+                                <img src="{{ url_for('static', filename='img/person/daniel.jpg') }}" class="img-fluid rounded-circle" alt="" loading="lazy">
+                            </div>
+                            <div class="member-info flex-grow-1">
+                                <h4>Daniel Ojeda</h4>
+                                <span>Desarrollador Backend y frontend</span>
+                                <p>Aprendiz en desarrollo backend, frontend, bases de datos y todo lo relacionado con el backend y el frondeted del sistema.</p>
+                                <div class="social">
+                                    <a href="#"><i class="bi bi-facebook"></i></a>
+                                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                                    <a href="#"><i class="bi bi-youtube"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .team-highlights {
+      background-color: #002a45;
+      border-radius: 20px;
+      padding: 60px 20px;
+      color: white;
+      text-align: center;
+    }
+  
+    .team-highlights h3 {
+      font-size: 2rem;
+      margin-bottom: 40px;
+      color: #ffffff;
+    }
+  
+    .highlight-item {
+      background-color: #003a5e;
+      border-radius: 15px;
+      padding: 30px 20px;
+      transition: transform 0.3s ease;
+      color: #ffffff;
+    }
+  
+    .highlight-item:hover {
+      transform: translateY(-10px);
+    }
+  
+    .highlight-item i {
+      font-size: 3rem;
+      color: #ffffff;
+      margin-bottom: 15px;
+      display: block;
+    }
+  
+    .highlight-item h4 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+  
+    .highlight-item p {
+      font-size: 1rem;
+      color: #ffffff;
+    }
+  </style>  
+  <div class="row mt-5">
+    <div class="col-lg-12">
+      <div class="team-highlights" data-aos="fade-up" data-aos-delay="400">
+        <h3>Destacados del Equipo</h3>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="highlight-item">
+              <i class="bi bi-people"></i>
+              <h4>Colaboración</h4>
+              <p>Un equipo comprometido que trabaja unido para lograr resultados de alto impacto.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="highlight-item">
+              <i class="bi bi-lightbulb"></i>
+              <h4>Innovación</h4>
+              <p>Creatividad y pensamiento estratégico aplicados en cada proyecto de desarrollo.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="highlight-item">
+              <i class="bi bi-shield-check"></i>
+              <h4>Compromiso</h4>
+              <p>Profesionales dedicados al crecimiento institucional y la excelencia tecnológica.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+</section>
+</main>
+
+<!-- Footer -->
+    <footer id="footer" class="footer">
+        <div class="container footer-top">
+          <div class="row">
+            <div class="col-lg-4 col-md-6 footer-about">
+              <h3>Repositorio SENA</h3>
+              <p>Plataforma digital para la gestión y consulta de recursos educativos del SENA.</p>
+            </div>
+    
+            <div class="col-lg-4 col-md-6 footer-contact">
+              <h4>Contacto</h4>
+              <p>
+                Km. 7 Vía a La Paz en Valledupar<br>
+                Bogotá, Colombia<br>
+                <strong>Teléfono:</strong> +(57) 601 7366060<br>
+                <strong>Atencion al ciudadano:</strong> 018000 910 270<br>
+                <strong>Correo:</strong> info@sena.edu.co<br>
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+<!-- Vendor JS Files -->
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"></script>
+
+<!-- Main JS File -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Perfil - Repositorio SENA</title>
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+  <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+  <!-- Fuentes y CSS -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Nunito Sans', sans-serif;
+    }
+
+    .profile-card {
+      background-color: #fff;
+      max-width: 600px;
+      margin: 80px auto;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: relative;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      font-size: 1.5rem;
+      color: #083d5d;
+      text-decoration: none;
+    }
+
+    .back-button:hover {
+      color: #0a4f78;
+    }
+
+    .profile-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 3px solid #083d5d;
+    }
+
+    .profile-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #083d5d;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-info p {
+      margin: 0.4rem 0;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .profile-info i {
+      color: #e3a127;
+      margin-right: 8px;
+    }
+
+    .btn-edit {
+      margin-top: 1rem;
+      background-color: #083d5d;
+      color: white;
+      border-radius: 0.5rem;
+    }
+
+    .btn-edit:hover {
+      background-color: #0a4f78;
+      color: #fff;
+    }
+
+    .profile-extra {
+      text-align: left;
+      margin-top: 1.5rem;
+    }
+
+    .profile-extra h5 {
+      font-weight: 600;
+      color: #00304d;
+      margin-bottom: 1rem;
+    }
+
+    .profile-extra ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .profile-extra ul li {
+      padding: 0.3rem 0;
+      color: #444;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="profile-card">
+
+      <!-- Flecha de regreso -->
+      <a href="{{ url_for('index') }}" class="back-button" title="Volver">
+        <i class="bi bi-arrow-left-circle-fill"></i>
+      </a>
+
+      <!-- Foto de perfil -->
+      <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}" alt="Foto de perfil" class="profile-img">
+
+      <!-- Nombre -->
+      <h2 class="profile-name">{{ usuario.nombre }} {{ usuario.apellido }}</h2>
+
+      <!-- Info básica -->
+      <div class="profile-info">
+        <p><i class="bi bi-envelope-fill"></i>{{ usuario.email }}</p>
+        <p><i class="bi bi-person-badge-fill"></i> Rol: {{ usuario.rol_id }}</p>
+        {% if usuario.fecha_registro %}
+        <p><i class="bi bi-calendar-check-fill"></i> Miembro desde: {{ usuario.fecha_registro.strftime('%d/%m/%Y') }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Botón editar -->
+      <a href="{{ url_for('configuracion') }}" class="btn btn-edit"><i class="bi bi-gear-fill"></i> Editar perfil</a>
+
+      <!-- Preferencias -->
+      <div class="profile-extra">
+        <h5>Preferencias:</h5>
+        <ul>
+          <li><i class="bi bi-check-circle"></i> Notificaciones activadas</li>
+          <li><i class="bi bi-check-circle"></i> Idioma: Español</li>
+          <li><i class="bi bi-check-circle"></i> Zona horaria: Bogotá (-5 GMT)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

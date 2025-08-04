@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Almacenamiento - Repositorio SENA</title>
+
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+
+</head>
+
+
+<body>
+    <!-- Header -->
+    <header id="header" class="header d-flex align-items-center fixed-top">
+        <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+            <a href="{{ url_for('index') }} " class="logo d-flex align-items-center me-auto me-xl-0">
+                <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
+            </a>
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+                    {% if usuario['rol_id'] == 3 %}
+                    <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
+                    <li class="dropdown"><a href="#"><span>Gestión</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{{ url_for('almacenamiento') }}" class="active">Almacenamiento</a></li>
+                            <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
+
+                        </ul>
+                    </li>
+                    <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+                        <!--imagenes-->
+      <div class="profile-menu-wrapper position-relative">
+        <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}"
+             alt="Perfil"
+             class="profile-img"
+             id="profileToggle"
+             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;">
+      
+        <div id="profileMenu" class="profile-menu d-none">
+          <ul class="list-unstyled m-0">
+            <li><a href="{{ url_for('perfil') }}">Mi perfil</a></li>
+            <li><a href="{{ url_for('configuracion') }}">Configuración</a></li>
+            <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            {% if usuario['rol_id'] == 3 %}
+              <li><a href="{{ url_for('asignar') }}">Asignar roles</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div> 
+<!--fin imagenes-->
+    </header>
+
+    <main id="main" class="main-page">
+        <div class="container py-5">
+            <h1 class="text-center mb-5">Almacenamiento de Contenidos</h1>
+            <div class="d-flex justify-content-center mb-5">
+                <a href="{{ url_for('subir_proyecto') }}" class="btn btn-success btn-lg px-4 py-2 d-flex align-items-center gap-2 shadow rounded-pill">
+                    <i class="bi bi-plus-circle-fill fs-4"></i>
+                    <span class="fw-semibold fs-5">Agregar Proyecto</span>
+                </a>
+            </div>            
+            <div class="row g-4">
+                <!-- Tarjeta Formación -->
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename='img/abstract/educational-773651_960_720-e1633411586648.png') }}" class="card-img-top" alt="Formación" width="300" height="150">
+                        <div class="card-body">
+                            <h5 class="card-title">Formación</h5>
+                            <p class="card-text">
+                                Documentos relacionados con la formación académica y profesional.
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-primary">Educación</span>
+                                <a href="{{ url_for('formacion') }}" class="btn btn-outline-primary btn-sm">Ver más</a>
+                            </div>
+                            <div class="classification">
+                                <h6 class="mt-3">Tipos de Proyectos:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle text-primary"></i> Programas de formación</li>
+                                    <li><i class="bi bi-check-circle text-primary"></i> Guías de aprendizaje</li>
+                                    <li><i class="bi bi-check-circle text-primary"></i> Recursos educativos</li>
+                                    <li><i class="bi bi-check-circle text-primary"></i> Materiales de estudio</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Investigación -->
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename='img/abstract/metodos-de-investigacion-og.jpg') }}" class="card-img-top" alt="Investigación" width="300" height="150">
+                        <div class="card-body">
+                            <h5 class="card-title">Investigación</h5>
+                            <p class="card-text">
+                                Publicaciones científicas y trabajos de grado.
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-success">Investigación</span>
+                                <a href="{{ url_for('investigacion') }}" class="btn btn-outline-success btn-sm">Ver más</a>
+                            </div>
+                            <div class="classification">
+                                <h6 class="mt-3">Tipos de Proyectos:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle text-success"></i> Artículos científicos</li>
+                                    <li><i class="bi bi-check-circle text-success"></i> Informes de investigación</li>
+                                    <li><i class="bi bi-check-circle text-success"></i> Trabajos de grado</li>
+                                    <li><i class="bi bi-check-circle text-success"></i> Estudios de caso</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Emprendimiento -->
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename='img/abstract/PQS-emprendimiento-negocio.jpg') }}" class="card-img-top" alt="Emprendimiento" width="300" height="150">
+                        <div class="card-body">
+                            <h5 class="card-title">Emprendimiento</h5>
+                            <p class="card-text">
+                                Proyectos empresariales y planes de negocio.
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-warning">Emprendimiento</span>
+                                <a href="{{ url_for('emprendimiento') }}" class="btn btn-outline-warning btn-sm">Ver más</a>
+                            </div>
+                            <div class="classification">
+                                <h6 class="mt-3">Tipos de Proyectos:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle text-warning"></i> Planes de negocio</li>
+                                    <li><i class="bi bi-check-circle text-warning"></i> Proyectos empresariales</li>
+                                    <li><i class="bi bi-check-circle text-warning"></i> Casos de éxito</li>
+                                    <li><i class="bi bi-check-circle text-warning"></i> Estudios de mercado</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Software -->
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename='img/abstract/tipos-de-software.jpg') }}" class="card-img-top" alt="Software" width="300" height="150">
+                        <div class="card-body">
+                            <h5 class="card-title">Proyectos de Area/Software</h5>
+                            <p class="card-text">
+                                Investigaciones y desarrollos especializados.
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-info">Proyectos de area</span>
+                                <a href="{{ url_for('software') }}" class="btn btn-outline-info btn-sm">Ver más</a>
+                            </div>
+                            <div class="classification">
+                                <h6 class="mt-3">Tipos de Proyectos:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle text-info"></i> Desarrollo de aplicaciones</li>
+                                    <li><i class="bi bi-check-circle text-info"></i> Soluciones empresariales</li>
+                                    <li><i class="bi bi-check-circle text-info"></i> Automatización de procesos</li>
+                                    <li><i class="bi bi-check-circle text-info"></i> Sistemas de información</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+<!-- Vendor JS Files -->
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/purecounter/purecounter_vanilla.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"></script>
+
+<!-- Template Main JS File -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>

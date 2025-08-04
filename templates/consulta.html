@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Consulta de Proyectos - Repositorio SENA</title>
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header d-flex align-items-center fixed-top">
+        <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+            <a href="{{ url_for('index') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+                <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
+            </a>
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+                    {% if usuario['rol_id'] == 3 %}
+                    <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
+                    <li class="dropdown"><a href="#"><span>Gestión</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{{ url_for('almacenamiento') }}">Almacenamiento</a></li>
+                            <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
+
+                        </ul>
+                    </li>
+                    <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+            <!--imagenes-->
+      <div class="profile-menu-wrapper position-relative">
+        <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}"
+             alt="Perfil"
+             class="profile-img"
+             id="profileToggle"
+             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;">
+      
+        <div id="profileMenu" class="profile-menu d-none">
+          <ul class="list-unstyled m-0">
+            <li><a href="{{ url_for('perfil') }}">Mi perfil</a></li>
+            <li><a href="{{ url_for('configuracion') }}">Configuración</a></li>
+            <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            {% if usuario['rol_id'] == 3 %}
+              <li><a href="{{ url_for('asignar') }}">Asignar roles</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div> 
+<!--fin imagenes-->
+    </header>
+
+    <main id="main" class="main-page consulta">
+        <div class="container py-5">
+            <h1 class="text-center mb-5">Consulta de Proyectos</h1>
+            
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0">Búsqueda de Proyectos</h5>
+                                <div class="d-flex gap-2">
+                                    <select id="tipoBusqueda" class="form-select">
+                                        <option value="">Todos los campos</option>
+                                        <option value="titulo">Título</option>
+                                        <option value="autor">Autor</option>
+                                        <option value="categoria">Categoría</option>
+                                        <option value="fecha">Fecha</option>
+                                    </select>
+                                    <div class="input-group">
+                                        <input type="text" id="busqueda" class="form-control" placeholder="Buscar...">
+                                        <button class="btn btn-primary" type="button" onclick="buscarProyectos()">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="resultadosBusqueda" class="mt-4">
+                                <!-- Los resultados se mostrarán aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Proyectos por Título</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Título</th>
+                                            <th>Autor</th>
+                                            <th>Categoría</th>
+                                            <th>Fecha</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="listaProyectos">
+                                        {% for proyecto in proyectos %}
+                                        <tr>
+                                            <td>{{ proyecto.titulo }}</td>
+                                            <td>{{ proyecto.autores or 'N/A' }}</td>
+                                            <td>{{ proyecto.categorias or 'N/A' }}</td>
+                                            <td>{{ proyecto.fecha_subida }}</td>
+                                            <td>
+                                                <a href="{{ url_for('ver_proyecto', proyecto_id=proyecto.id) }}" class="btn btn-sm btn-primary" title="Ver más">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a href="{{ url_for('descargar_pdf_investigacion', id=proyecto.id) }}" class="btn btn-sm btn-secondary" title="Descargar">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>                                    
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Vendor JS Files -->
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/purecounter/purecounter_vanilla.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"></script>
+
+    <!-- Template Main JS File -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Función para cargar los proyectos
+        function cargarProyectos() {
+            const tipo = new URLSearchParams(window.location.search).get('tipo');
+            const lista = document.getElementById('listaProyectos');
+            
+            // Aquí iría la llamada a la API o base de datos para obtener los proyectos
+            // Por ahora, mostramos proyectos de ejemplo
+            const proyectos = [
+                { titulo: "Desarrollo de Aplicaciones Móviles", autor: "Juan Pérez", categoria: "Software", fecha: "2025-05-23" },
+                { titulo: "Análisis de Datos con Python", autor: "María García", categoria: "Formación", fecha: "2025-05-22" },
+                { titulo: "Plan de Negocio para Startups", autor: "Carlos López", categoria: "Emprendimiento", fecha: "2025-05-21" }
+            ];
+
+            proyectos.sort((a, b) => a.titulo.localeCompare(b.titulo)); // Ordenar alfabéticamente
+
+            proyectos.forEach(proyecto => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${proyecto.titulo}</td>
+                    <td>${proyecto.autor}</td>
+                    <td>${proyecto.categoria}</td>
+                    <td>${new Date(proyecto.fecha).toLocaleDateString()}</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-primary" title="Ver más">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-secondary" title="Descargar">
+                            <i class="bi bi-download"></i>
+                        </a>
+                    </td>
+                `;
+                lista.appendChild(row);
+            });
+        }
+
+        // Función para buscar proyectos
+        function buscarProyectos() {
+            const tipo = document.getElementById('tipoBusqueda').value;
+            const termino = document.getElementById('busqueda').value;
+            const query = new URLSearchParams();
+
+            if (tipo) query.append('tipo', tipo);
+            if (termino) query.append('q', termino);
+
+            window.location.href = `/consulta?${query.toString()}`;
+        }
+
+    
+            
+            // Aquí iría la lógica de búsqueda real
+            resultados.innerHTML = `
+                <div class="alert alert-info">
+                    Buscando "${termino}" en ${tipoBusqueda || 'todos los campos'}...
+                </div>
+            `;
+           
+
+        // Cargar proyectos cuando la página se cargue
+        document.addEventListener('DOMContentLoaded', cargarProyectos);
+    </script>
+</body>
+</html>

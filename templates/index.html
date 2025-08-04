@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Index - Strategy Bootstrap Template</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+<!-- Favicons -->
+<link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+<link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+<!-- Vendor CSS Files -->
+<link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+<!-- Main CSS File -->
+<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: Strategy
+  * Template URL: https://bootstrapmade.com/strategy-bootstrap-agency-template/
+  * Updated: May 09 2025 with Bootstrap v5.3.6
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+  <style>
+    .profile-menu-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+  
+    .profile-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid #fff;
+      transition: box-shadow 0.3s ease;
+    }
+  
+    .profile-img:hover {
+      box-shadow: 0 0 0 2px #00304D;
+    }
+  
+    .profile-menu {
+      position: absolute;
+      top: 55px;
+      right: 0;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      min-width: 160px;
+      z-index: 9999;
+      padding: 8px 0;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+  
+    .profile-menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+  
+    .profile-menu ul li a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      color: #00304D;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+  
+    .profile-menu ul li a i {
+      font-size: 16px;
+      color: #00304D;
+    }
+  
+    .profile-menu ul li a:hover {
+      background-color: #f5f5f5;
+      color: #00304D;
+    }
+  
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+</style>
+</head>
+<script>
+  let timeout;
+  let warningTimeout;
+  const warningTime = 5 * 60 * 1000; // 5 minutos
+  const logoutURL = "{{ url_for('logout') }}"; // Ajusta esto a tu ruta real de logout
+
+  function resetTimer() {
+    clearTimeout(timeout);
+    clearTimeout(warningTimeout);
+
+    // Muestra alerta 5 minutos después de inactividad
+    warningTimeout = setTimeout(showWarning, warningTime);
+  }
+
+  function showWarning() {
+    const stayLoggedIn = confirm("Has estado inactivo por 5 minutos.\n¿Deseas seguir en la sesión?");
+    if (stayLoggedIn) {
+      resetTimer(); // reinicia el contador
+    } else {
+      window.location.href = logoutURL; // redirige para cerrar sesión
+    }
+  }
+
+  // Detecta cualquier actividad del usuario
+  window.onload = resetTimer;
+  document.onmousemove = resetTimer;
+  document.onkeydown = resetTimer;
+  document.onscroll = resetTimer;
+  document.onclick = resetTimer;
+</script>
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+        <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="{{ url_for('index') }}">Inicio</a></li>
+          <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+          {% if usuario['rol_id'] == 3 %}
+          <li><a href="{{ url_for('estadisticas') }}">Estadisticas</a></li>
+          {% endif %}
+          <li><a href="{{ url_for('reportes') }}">Reportes</a></li>
+          <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
+          <li class="dropdown"><a href="#"><span>Gestion</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="{{ url_for('almacenamiento') }}">almacenamiento</a></li>
+              <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
+            </ul>
+          </li>
+          <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+<!--imagenes-->
+      <div class="profile-menu-wrapper position-relative">
+        <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}"
+             alt="Perfil"
+             class="profile-img"
+             id="profileToggle"
+             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;">
+      
+        <div id="profileMenu" class="profile-menu d-none">
+          <ul class="list-unstyled m-0">
+            <li><a href="{{ url_for('perfil') }}">Mi perfil</a></li>
+            <li><a href="{{ url_for('configuracion') }}">Configuración</a></li>
+            <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            {% if usuario['rol_id'] == 3 %}
+              <li><a href="{{ url_for('asignar') }}">Asignar roles</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div> 
+<!--fin imagenes-->
+</div>
+</header>
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-7 content-col" data-aos="fade-up">
+            <div class="content">
+              <div class="agency-name">
+                <h5>SENA</h5>
+              </div>
+
+              <div class="main-heading">
+                <h1>REPOSITORIO <br>SENA</h1>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="description">
+                <p>Descubre estrategias innovadoras para una comunicación visual efectiva.
+                  Transformamos proyectos e ideas en realidades impactantes, facilitando que el talento del SENA se destaque en un entorno competitivo. Nuestro equipo está comprometido con el uso de técnicas de vanguardia para organizar, presentar y promover tus iniciativas de manera que conecten con tu audiencia y generen resultados significativos.</p>
+              </div>
+<style>
+              .card-box {
+  background-color: #f0f4f8;
+  border-radius: 15px;
+  width: 350px;
+  max-height: 200px; /* Altura contraída */
+  overflow: hidden;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: max-height 0.5s ease, background-color 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.card-box h3 {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  color: #000;
+}
+
+.card-box p {
+  color: #333;
+  margin: 0;
+}
+
+/* Al pasar el mouse, se expande */
+.card-box:hover {
+  max-height: 1000px; /* Mucho más alto que el contenido completo */
+  background-color: #ffffff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+</style>              
+              <div class="mission-vision-container">
+                <div class="card-box mission-card">
+                  <h3>Misión</h3>
+                  <p>
+                    El SENA está  encargado de cumplir la función que le corresponde al Estado de invertir en el desarrollo social y técnico de los trabajadores colombianos, ofreciendo y ejecutando la formación profesional integral, para la incorporación y el desarrollo de las personas en actividades productivas que contribuyan al desarrollo social, económico y tecnológico del país (Ley 119/1994).
+                  </p>
+                </div>
+                <div class="card-box vision-card">
+                  <h3>Visión</h3>
+                  <p>
+                    Para el año 2026, el Servicio Nacional de Aprendizaje - SENA estará a la vanguardia de la cualificación del talento humano, tanto a nivel nacional como internacional. Esto se logrará a través de la formación profesional integral, el empleo, el emprendimiento y el reconocimiento de aprendizajes previos. Nuestro objetivo es generar valor público y fortalecer la economía campesina, popular, verde y digital, siempre con un enfoque diferencial orientado a la construcción del cambio, la transformación productiva, la soberanía alimentaria 
+                    y la consolidación de una paz total, materializando así la autonomía territorial, y promoviendo la justicia social, ambiental y económica.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="cta-button">
+                <a href="{{ url_for('registro') }}" class="btn btn-secondary">
+                  <span>REGISTRO</span>
+                  <i class="bi bi-box-arrow-in-right"></i>
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-secondary">
+                  <span>INICIO SESIÓN</span>
+                  <i class="bi bi-box-arrow-in-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5" data-aos="zoom-out">
+            <div class="visual-content">
+              <div class="fluid-shape">
+                <img src="data:image/png;base64,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" alt="SENA Logo" class="fluid-img">
+              </div>
+
+
+                <div class="stats-arrow">
+                  <a href="#portfolio"><i class="bi bi-arrow-up-right"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- /Hero Section -->
+
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+<!-- Vendor JS Files -->
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/php-email-form/validate.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
+
+<!-- Main JS File -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.getElementById('profileToggle');
+    const menu = document.getElementById('profileMenu');
+
+    toggle.addEventListener('click', function () {
+      menu.classList.toggle('d-none');
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!toggle.contains(event.target) && !menu.contains(event.target)) {
+        menu.classList.add('d-none');
+      }
+    });
+  });
+</script>
+
+</body>
+
+</html>

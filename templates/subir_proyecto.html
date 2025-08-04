@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Index - Strategy Bootstrap Template</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+<!-- Favicons -->
+<link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+<link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+<!-- Vendor CSS Files -->
+<link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+<!-- Main CSS File -->
+<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: Strategy
+  * Template URL: https://bootstrapmade.com/strategy-bootstrap-agency-template/
+  * Updated: May 09 2025 with Bootstrap v5.3.6
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+  <style>
+    .profile-menu-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+  
+    .profile-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid #fff;
+      transition: box-shadow 0.3s ease;
+    }
+  
+    .profile-img:hover {
+      box-shadow: 0 0 0 2px #e3a127;
+    }
+  
+    .profile-menu {
+      position: absolute;
+      top: 55px;
+      right: 0;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      min-width: 160px;
+      z-index: 9999;
+      padding: 8px 0;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+  
+    .profile-menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+  
+    .profile-menu ul li a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      color: #00304D;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+  
+    .profile-menu ul li a i {
+      font-size: 16px;
+      color: #e3a127;
+    }
+  
+    .profile-menu ul li a:hover {
+      background-color: #f5f5f5;
+      color: #e3a127;
+    }
+  
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+   
+
+</head>
+
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+        <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="{{ url_for('index') }}">Inicio</a></li>
+          <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+          <li><a href="{{ url_for('estadisticas') }}">Estadisticas</a></li>
+          <li><a href="{{ url_for('reportes') }}">Reportes</a></li>
+          <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
+          <li class="dropdown"><a href="#"><span>Gestion</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="{{ url_for('almacenamiento') }}">almacenamiento</a></li>
+              <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
+
+            </ul>
+          </li>
+          <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+<!--imagenes-->
+      <div class="profile-menu-wrapper position-relative">
+        <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}"
+             alt="Perfil"
+             class="profile-img"
+             id="profileToggle"
+             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;">
+      
+        <div id="profileMenu" class="profile-menu d-none">
+          <ul class="list-unstyled m-0">
+            <li><a href="#">Mi perfil</a></li>
+            <li><a href="#">Configuración</a></li>
+            <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+          </ul>
+        </div>
+      </div> 
+<!--fin imagenes-->
+</div>
+</header>
+
+<main id="main" class="main-page">
+    <div class="container py-5">
+        <h1 class="text-center mb-5">Subir proyecto</h1>
+        <div class="row g-4">
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Subir proyecto</h5>
+                        <form action="{{ url_for('subir_proyecto') }}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label for="titulo" class="form-label">Título del Trabajo</label>
+                                <input type="text" class="form-control" id="titulo" name="titulo" required>
+                            </div>      
+                            <div class="mb-3">
+                                <label for="autores" class="form-label">Autores</label>
+                                <div class="input-group">
+                                  <input type="text" class="form-control form-control-sm" id="busqueda_autor" placeholder="Buscar autor...">
+                                </div>
+                                <select multiple class="form-select mt-1" id="autores" name="autores" size="6" required>
+                                  {% for autor in autores %}
+                                  <option value="{{ autor.id }}">{{ autor.nombre or 'Sin nombre' }} {{ autor.apellido or 'Sin apellido' }}</option>
+                                  {% endfor %}
+                                </select>
+                                <small class="form-text text-muted">Escribe para filtrar. Usa Ctrl (Windows) o Cmd (Mac) para seleccionar múltiples.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="palabras_clave" class="form-label">Palabras Clave</label>
+                                <input type="text" class="form-control" id="palabras_clave" name="palabras_clave" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="archivo" class="form-label">Archivos</label>
+                                <input class="form-control" type="file" id="archivo" name="archivo" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="categorias" class="form-label">Categorías</label>
+                                <select multiple class="form-select" id="categorias" name="categorias" required>
+                                    {% for categoria in categorias %}
+                                    <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                                <small class="form-text text-muted">Selecciona una o más categorías.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="competencias" class="form-label">Competencias</label>
+                                <input type="text" class="form-control" id="competencias" name="competencias" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="git_link" class="form-label">Enlace de Git</label>
+                                <input type="url" class="form-control" id="git_link" name="enlace_git" placeholder="https://github.com/">
+                            </div>
+                            <div class="mb-3">
+                                <label for="drive_link" class="form-label">Enlace de Drive</label>
+                                <input type="url" class="form-control" id="drive_link" name="enlace_drive" placeholder="https://drive.google.com/">
+                            </div>
+                            <div class="mb-3">
+                                <label for="fecha_subida" class="form-label">Fecha de Subida</label>
+                                <input type="date" class="form-control" id="fecha_subida" name="fecha_subida" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="fecha_finalizacion" class="form-label">Fecha de Finalización</label>
+                                <input type="date" class="form-control" id="fecha_finalizacion" name="fecha_finalizacion" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Subir Trabajo</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('busqueda_autor');
+    const select = document.getElementById('autores');
+    const options = Array.from(select.options);
+
+    input.addEventListener('input', function () {
+      const query = this.value.toLowerCase();
+      select.innerHTML = '';  // limpiar
+
+      options.forEach(option => {
+        if (option.text.toLowerCase().includes(query)) {
+          select.appendChild(option);
+        }
+      });
+
+      // Si el input está vacío, restaurar todas las opciones
+      if (query === '') {
+        options.forEach(option => select.appendChild(option));
+      }
+    });
+  });
+</script>
+</body>
+</html>

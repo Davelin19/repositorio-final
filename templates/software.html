@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Subir Proyecto de Software - Repositorio SENA</title>
+
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Raleway&family=Nunito+Sans&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header d-flex align-items-center fixed-top">
+        <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+            <a href="{{ url_for('index') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+                <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
+            </a>
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+                    {% if usuario['rol_id'] == 3 %}
+                    <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
+                    <li class="dropdown"><a href="#"><span>Gestión</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{{ url_for('almacenamiento') }}" class="active">Almacenamiento</a></li>
+                            <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
+
+                        </ul>
+                    </li>
+                    <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+            <!--imagenes-->
+<div class="profile-menu-wrapper position-relative">
+  <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}"
+       alt="Perfil"
+       class="profile-img"
+       id="profileToggle"
+       style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;">
+
+  <div id="profileMenu" class="profile-menu d-none">
+    <ul class="list-unstyled m-0">
+      <li><a href="{{ url_for('perfil') }}">Mi perfil</a></li>
+      <li><a href="{{ url_for('configuracion') }}">Configuración</a></li>
+      <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+      {% if usuario['rol_id'] == 3 %}
+        <li><a href="{{ url_for('asignar') }}">Asignar roles</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</div> 
+<!--fin imagenes-->
+</div> 
+    </header>
+
+    <main id="main" class="main-page">
+        <div class="container py-5">
+      
+          <!-- TÍTULO -->
+          <h1 class="text-center mb-5">Clasificación de Proyectos de Software</h1>
+      
+          <!-- BOTÓN AGREGAR PROYECTO -->
+          <div class="d-flex justify-content-center mb-4">
+            <a href="{{ url_for('subir_proyecto') }}" class="btn btn-success btn-lg px-4 py-2 d-flex align-items-center gap-2 shadow rounded-pill">
+              <i class="bi bi-plus-circle-fill fs-4"></i>
+              <span class="fw-semibold fs-5">Agregar Proyecto</span>
+            </a>
+          </div>
+      
+          <!-- TABLA DE PROYECTOS -->
+          <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="card-title mb-0">Listado de Proyectos</h5>
+                    <div class="d-flex align-items-center gap-2">
+                      <label for="filtroCategoria" class="fw-semibold me-2 mb-0">Filtrar por categoria:</label>
+                      <select id="filtroCategoria" class="form-select" style="max-width: 200px;">
+                        <option value="todos">Todos</option>
+                        <option value="Formación">Formación</option>
+                        <option value="Investigación">Investigación</option>
+                        <option value="Emprendimiento">Emprendimiento</option>
+                        <option value="Software">Software</option>
+                      </select>
+                    </div>
+                  </div>                  
+              <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Título</th>
+                      <th>Autores</th>
+                      <th>Categorías</th>
+                      <th>Competencias</th>
+                      <th>Fecha Subida</th>
+                      <th>Fecha Finalización</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for proyecto in documentos %}
+                    <tr data-categoria="{{ proyecto.categorias|lower|trim }}">
+                      <td>{{ proyecto.titulo }}</td>
+                      <td>{{ proyecto.autores or 'N/A' }}</td>
+                      <td>{{ proyecto.categorias or 'N/A' }}</td>
+                      <td>{{ proyecto.competencias or 'N/A' }}</td>
+                      <td>{{ proyecto.fecha_subida or 'N/A' }}</td>
+                      <td>{{ proyecto.fecha_finalizacion or 'N/A' }}</td>
+                      <td class="d-flex flex-wrap gap-1">
+                        <a href="{{ url_for('ver_software', software_id=proyecto.id) }}" class="btn btn-sm btn-outline-primary">Ver</a>
+                        {% if usuario['rol_id'] == 3 %}
+                        <a href="{{ url_for('descargar_pdf_software', id=proyecto.id) }}" class="btn btn-sm btn-outline-success">PDF</a>
+                        {% endif %}
+                        {% if usuario['rol_id'] == 3 %}
+                        <form action="{{ url_for('eliminar_software', software_id=proyecto.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este proyecto?')" style="display:inline;">
+                          <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                        </form>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    {% if documentos|length == 0 %}
+                    <tr>
+                      <td colspan="7" class="text-center text-muted">No hay proyectos disponibles.</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+      
+        </div>
+      </main>
+
+    <!-- Footer -->
+    <footer id="footer" class="footer">
+        <div class="container footer-top">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 footer-about">
+                    <h3>Repositorio SENA</h3>
+                    <p>Sistema de gestión y almacenamiento de proyectos académicos e investigativos.</p>
+                </div>
+
+                <div class="col-lg-4 col-md-6 footer-links">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><i class="bi bi-chevron-right"></i> <a href="{{ url_for('index') }}">Inicio</a></li>
+                        <li><i class="bi bi-chevron-right"></i> <a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+                        <li><i class="bi bi-chevron-right"></i> <a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+                        <li><i class="bi bi-chevron-right"></i> <a href="{{ url_for('almacenamiento') }}">Almacenamiento</a></li>
+                        <li><i class="bi bi-chevron-right"></i> <a href="{{ url_for('consulta') }}">Consultar</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4 col-md-6 footer-contact">
+                    <h4>Contacto</h4>
+                    <p>
+                        <strong>Email:</strong> repositorio@sena.edu.co<br>
+                        <strong>Teléfono:</strong> +57 300 123 4567<br>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <div class="copyright">
+                &copy; Copyright <strong><span>Repositorio SENA</span></strong>. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+    <script>
+        document.getElementById("filtroCategoria").addEventListener("change", function () {
+          const filtro = this.value.toLowerCase();
+          const filas = document.querySelectorAll("tbody tr");
+        
+          filas.forEach(fila => {
+            const categoria = fila.getAttribute("data-categoria")?.toLowerCase();
+            if (filtro === "todas" || categoria === filtro) {
+              fila.style.display = "";
+            } else {
+              fila.style.display = "none";
+            }
+          });
+        });
+        </script>
+        
+    <!-- JS de Validación -->
+    <script>
+    document.querySelector("form").addEventListener("submit", function(e) {
+        const autores = document.getElementById("autores");
+        const categorias = document.getElementById("categorias");
+        if ([...autores.selectedOptions].length === 0 || [...categorias.selectedOptions].length === 0) {
+            e.preventDefault();
+            alert("Por favor, selecciona al menos un autor y una categoría.");
+        }
+    });
+    </script>
+
+    <!-- Vendor JS Files -->
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const filas = document.querySelectorAll("tbody tr");
+      
+        filas.forEach(fila => {
+          const categoria = fila.getAttribute("data-categoria")?.toLowerCase().trim();
+          // Solo muestra los que sean exactamente "software"
+          if (categoria === "software") {
+            fila.style.display = "";
+          } else {
+            fila.style.display = "none";
+          }
+        });
+      
+        // También actualiza el filtro para que solo se muestre "Software" como opción seleccionada
+        const selectFiltro = document.getElementById("filtroCategoria");
+        if (selectFiltro) {
+          selectFiltro.value = "Software";
+        }
+      });
+      </script>
+      
+</body>
+</html>
