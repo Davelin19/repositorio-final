@@ -214,35 +214,45 @@ def reportes():
     usuario = session.get('usuario', None)
 
     conn = connect_to_db()
-    cur = conn.cursor()
+    cur = conn.cursor(pymysql.cursors.DictCursor)  # Use DictCursor to get results as dictionaries
 
-    base_query = '''
-        SELECT 
-            d.id, 
-            d.titulo, 
-            d.fecha_subida, 
-            d.fecha_finalizacion,
-            GROUP_CONCAT(DISTINCT CONCAT(u.nombre, ' ', u.apellido) SEPARATOR ', ') AS autores,
-            GROUP_CONCAT(DISTINCT c.nombre SEPARATOR ', ') AS categorias
-        FROM documentos d
-        LEFT JOIN documento_autor da ON d.id = da.documento_id
-        LEFT JOIN usuarios u ON da.usuario_id = u.id
-        LEFT JOIN documento_categoria dc ON d.id = dc.documento_id
-        LEFT JOIN categorias c ON dc.categoria_id = c.id
-        GROUP BY d.id
-        ORDER BY d.fecha_subida DESC
-    '''
-
-    cur.execute(base_query)
-    columnas = [desc[0] for desc in cur.description]
-    proyectos = [dict(zip(columnas, fila)) for fila in cur.fetchall()]
-
-    cur.close()
-    conn.close()
+    try:
+        cur.execute('''
+            SELECT 
+                d.id, 
+                d.titulo, 
+                d.fecha_subida, 
+                d.fecha_finalizacion,
+                COALESCE(GROUP_CONCAT(DISTINCT CONCAT(u.nombre, ' ', u.apellido) SEPARATOR ', '), 'Sin autor') AS autores,
+                COALESCE(GROUP_CONCAT(DISTINCT c.nombre SEPARATOR ', '), 'Sin categoría') AS categorias
+            FROM documentos d
+            LEFT JOIN documento_autor da ON d.id = da.documento_id
+            LEFT JOIN usuarios u ON da.usuario_id = u.id
+            LEFT JOIN documento_categoria dc ON d.id = dc.documento_id
+            LEFT JOIN categorias c ON dc.categoria_id = c.id
+            GROUP BY d.id, d.titulo, d.fecha_subida, d.fecha_finalizacion
+            ORDER BY d.fecha_subida DESC
+        ''')
+        
+        proyectos = cur.fetchall()
+        
+        # Convert datetime objects to strings for template rendering
+        for proyecto in proyectos:
+            if proyecto['fecha_subida']:
+                proyecto['fecha_subida'] = proyecto['fecha_subida'].strftime('%Y-%m-%d')
+            if proyecto['fecha_finalizacion']:
+                proyecto['fecha_finalizacion'] = proyecto['fecha_finalizacion'].strftime('%Y-%m-%d')
+                
+    except Exception as e:
+        print(f"Error al obtener proyectos: {e}")
+        proyectos = []
+        
+    finally:
+        cur.close()
+        conn.close()
 
     return render_template('reportes.html', proyectos=proyectos, usuario=usuario)
-
-
+    
 @app.route('/comunidad')
 def comunidad():
     usuario = session.get('usuario', None)

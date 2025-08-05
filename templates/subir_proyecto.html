@@ -168,6 +168,9 @@
                             <div class="mb-3">
                                 <label for="titulo" class="form-label">Título del Trabajo</label>
                                 <input type="text" class="form-control" id="titulo" name="titulo" required>
+                                <div class="invalid-feedback">
+                                  Por favor ingresa un título.
+                               </div>
                             </div>      
                             <div class="mb-3">
                                 <label for="autores" class="form-label">Autores</label>
@@ -190,9 +193,10 @@
                                 <input type="text" class="form-control" id="palabras_clave" name="palabras_clave" required>
                             </div>
                             <div class="mb-3">
-                                <label for="archivo" class="form-label">Archivos</label>
-                                <input class="form-control" type="file" id="archivo" name="archivo" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip" required>
-                            </div>
+                              <label for="archivo" class="form-label">Archivos</label>
+                              <input class="form-control" type="file" id="archivo" name="archivo" required>
+                              <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>                                                     
                             <div class="mb-3">
                                 <label for="categorias" class="form-label">Categorías</label>
                                 <select multiple class="form-select" id="categorias" name="categorias" required>
@@ -254,5 +258,20 @@
     });
   });
 </script>
+<script>
+  (() => {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    forms.forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+  </script>  
 </body>
 </html>
