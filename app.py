@@ -12,6 +12,8 @@ import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from functools import wraps
+import pymysql.cursors 
+from pymysql.cursors import DictCursor
 
 
 
@@ -31,7 +33,7 @@ def connect_to_db():
         user='root',
         password='',
         database='repositorio_cbc',
-        cursorclass=pymysql.cursors.DictCursor
+        cursorclass=DictCursor
     )
 
 # ------------------ VER ARCHIVO DINÁMICO SEGÚN SU TIPO ------------------
@@ -300,6 +302,60 @@ def api_estadisticas():
 def equipo():
     usuario = session.get('usuario', None)
     return render_template('equipo.html', usuario=usuario)
+
+@app.route('/api/top/usuarios')
+def api_top_usuarios():
+    conn = connect_to_db()
+    cur = conn.cursor()
+
+    query = """
+        SELECT u.id, u.nombre, u.apellido,
+               COUNT(da.documento_id) AS total_proyectos
+        FROM usuarios u
+        LEFT JOIN documento_autor da ON u.id = da.usuario_id
+        GROUP BY u.id
+        ORDER BY total_proyectos DESC
+        LIMIT 10
+    """
+
+    cur.execute(query)
+    usuarios = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return jsonify({
+        'status': 'success',
+        'data': usuarios
+    })
+
+
+@app.route('/top')
+def top_usuarios():
+    usuario = session.get('usuario', None)
+    conn = connect_to_db()
+    cur = conn.cursor()
+
+    query = """
+        SELECT u.id, u.nombre, u.apellido, u.rol_id,
+               COUNT(da.documento_id) AS total_proyectos
+        FROM usuarios u
+        JOIN documento_autor da ON u.id = da.usuario_id
+        JOIN documentos d ON d.id = da.documento_id
+        GROUP BY u.id
+        ORDER BY total_proyectos DESC
+        LIMIT 10
+    """
+
+    cur.execute(query)
+    top_usuarios = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template('top_usuarios.html', top_usuarios=top_usuarios, usuario=usuario)
+
+
 #--------------------RUTAS DE CONTACTO ------------------   
 @app.route('/contacto', methods=['GET', 'POST'])
 def contacto():
@@ -413,7 +469,7 @@ def subir_proyecto():
                     continue
 
             conn.commit()
-            flash('Proyecto subido exitosamente.')
+            flash("¡El proyecto se subió con éxito!", "success")
             return redirect(url_for('subir_proyecto'))
 
         except Exception as e:
@@ -612,16 +668,12 @@ def registro():
             return redirect(url_for('registro'))
 
     else:
-        # Cargar roles dinámicamente
-        cur.execute('SELECT id, nombre FROM roles')
-        roles = cur.fetchall()
-
+        # No need to load roles anymore since we're setting a default role
         cur.close()
         conn.close()
 
         usuario = session.get('usuario', None)
-
-        return render_template('registro.html', roles=roles, usuario=usuario)
+        return render_template('registro.html', usuario=usuario)
 
 #------------------TIENE PERMISO------------------
 def tiene_permiso(nombre_permiso):
@@ -659,16 +711,18 @@ def formacion():
     cur = conn.cursor()
 
     cur.execute('''
-    SELECT d.id, d.titulo, d.competencias, d.fecha_subida, d.fecha_finalizacion,
-           GROUP_CONCAT(DISTINCT CONCAT(u.nombre, ' ', u.apellido) SEPARATOR ', ') AS autores,
-           GROUP_CONCAT(DISTINCT c.nombre SEPARATOR ', ') AS categorias
-    FROM documentos d
-    LEFT JOIN documento_autor da ON d.id = da.documento_id
-    LEFT JOIN usuarios u ON da.usuario_id = u.id
-    LEFT JOIN documento_categoria dc ON d.id = dc.documento_id
-    LEFT JOIN categorias c ON dc.categoria_id = c.id
-    GROUP BY d.id
+SELECT d.id, d.titulo, d.competencias, d.fecha_subida, d.fecha_finalizacion,
+       GROUP_CONCAT(DISTINCT CONCAT(u.nombre, ' ', u.apellido) SEPARATOR ', ') AS autores,
+       GROUP_CONCAT(DISTINCT c.nombre SEPARATOR ', ') AS categorias
+FROM documentos d
+LEFT JOIN documento_autor da ON d.id = da.documento_id
+LEFT JOIN usuarios u ON da.usuario_id = u.id
+LEFT JOIN documento_categoria dc ON d.id = dc.documento_id
+LEFT JOIN categorias c ON dc.categoria_id = c.id
+GROUP BY d.id
 ''')
+
+
     documentos = cur.fetchall()
 
     cur.execute('SELECT id, nombre, apellido FROM usuarios WHERE nombre IS NOT NULL AND apellido IS NOT NULL')
@@ -1189,7 +1243,7 @@ def eliminar_emprendimiento(proyecto_id):
 
     return redirect(url_for('emprendimiento'))
 
-#------------------ SUBIR PROYECTO ------------------
+#------------------ SUBIR SOFTWARE ------------------
 @app.route('/software', methods=['GET', 'POST'])
 @tiene_permiso('subir_documentos')
 def software():

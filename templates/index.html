@@ -107,36 +107,55 @@
     }
 </style>
 </head>
+<!-- Asegúrate de tener SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-  let timeout;
-  let warningTimeout;
-  const warningTime = 5 * 60 * 1000; // 5 minutos
-  const logoutURL = "{{ url_for('logout') }}"; // Ajusta esto a tu ruta real de logout
+let warningTimeout;
+let logoutTimeout;
+const warningTime = 5 * 60 * 1000; // 5 minutos de inactividad
+const extraTime = 1 * 60 * 1000;   // 1 minuto después del aviso
+const logoutURL = "{{ url_for('logout') }}"; // Ruta de cierre de sesión
 
-  function resetTimer() {
-    clearTimeout(timeout);
-    clearTimeout(warningTimeout);
+function resetTimer() {
+  clearTimeout(warningTimeout);
+  clearTimeout(logoutTimeout);
 
-    // Muestra alerta 5 minutos después de inactividad
-    warningTimeout = setTimeout(showWarning, warningTime);
-  }
+  // Lanzar advertencia tras 5 min sin actividad
+  warningTimeout = setTimeout(showWarning, warningTime);
+}
 
-  function showWarning() {
-    const stayLoggedIn = confirm("Has estado inactivo por 5 minutos.\n¿Deseas seguir en la sesión?");
-    if (stayLoggedIn) {
-      resetTimer(); // reinicia el contador
+function showWarning() {
+  Swal.fire({
+    title: "Inactividad detectada",
+    text: "Has estado inactivo por 5 minutos. ¿Deseas seguir en la sesión?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, continuar",
+    cancelButtonText: "No, cerrar sesión",
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      resetTimer(); // reinicia el contador si el usuario quiere seguir
     } else {
-      window.location.href = logoutURL; // redirige para cerrar sesión
+      if (result.isConfirmed) {
+        resetTimer(); // reinicia el contador si el usuario quiere seguir
+      } else {
+        window.location.href = logoutURL; // cerrar de inmediato
+      }
     }
-  }
+  });
+}
 
-  // Detecta cualquier actividad del usuario
-  window.onload = resetTimer;
-  document.onmousemove = resetTimer;
-  document.onkeydown = resetTimer;
-  document.onscroll = resetTimer;
-  document.onclick = resetTimer;
+// Detectar actividad del usuario
+window.onload = resetTimer;
+document.onmousemove = resetTimer;
+document.onkeydown = resetTimer;
+document.onscroll = resetTimer;
+document.onclick = resetTimer;
 </script>
+
 <body class="index-page">
 
   <header id="header" class="header d-flex align-items-center fixed-top">
@@ -152,6 +171,7 @@
           {% if usuario['rol_id'] == 3 %}
           <li><a href="{{ url_for('estadisticas') }}">Estadisticas</a></li>
           {% endif %}
+          <li><a href="{{ url_for('top_usuarios') }}">Top</a></li>
           <li><a href="{{ url_for('reportes') }}">Reportes</a></li>
           <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
           <li class="dropdown"><a href="#"><span>Gestion</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -182,7 +202,7 @@
             {% endif %}
           </ul>
         </div>
-      </div> 
+      </div>
 <!--fin imagenes-->
 </div>
 </header>
@@ -321,7 +341,6 @@
     });
   });
 </script>
-
 </body>
 
 </html>

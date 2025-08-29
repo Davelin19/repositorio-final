@@ -98,6 +98,7 @@
                     {% if usuario['rol_id'] == 3 %}
                     <li><a href="{{ url_for('estadisticas') }}">Estadisticas</a></li>
                     {% endif %}
+                    <li><a href="{{ url_for('top_usuarios') }}">Top</a></li>
                     <li><a href="{{ url_for('reportes') }}">Reportes</a></li>
                     <li><a href="{{ url_for('equipo') }}">Equipo</a></li> 
                     <li class="dropdown"><a href="#"><span>Gestion</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -193,15 +194,7 @@
                         <label for="numero_identificacion" class="form-label">Número de Identificación</label>
                         <input type="text" class="form-control" id="numero_identificacion" name="numero_identificacion" required>
                     </div>
-                    <div class="col-md-6">
-                        <label for="rol_id" class="form-label">Rol</label>
-                        <select class="form-select form-control" id="role" name="rol_id" required>
-                            <option value="">Selecciona tu rol</option>
-                            {% for rol in roles %}
-                                <option value="{{ rol.id }}" {% if rol.nombre == 'Aprendiz' %}selected{% endif %}>{{ rol.nombre }}</option>
-                            {% endfor %}
-                        </select>  
-                    </div>
+                    <input type="hidden" name="rol_id" value="1"> <!-- Default role ID for 'aprendiz' -->
                 
                     <!-- Contraseña -->
                     <div class="col-12 mt-4">

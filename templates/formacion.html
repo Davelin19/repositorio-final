@@ -26,12 +26,13 @@
             <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
         </a>
         <nav id="navmenu" class="navmenu">
-            <ul>
+            <ul class="gap-1">
                 <li><a href="{{ url_for('index') }}">Inicio</a></li>
                 <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li> 
                 {% if usuario['rol_id'] == 3 %}
                 <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
                 {% endif %}
+                <li><a href="{{ url_for('top_usuarios') }}">Top</a></li>
                 <li><a href="{{ url_for('reportes') }}">Reportes</a></li>
                 <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
                 <li class="dropdown"><a href="#"><span>Gestión</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -90,10 +91,10 @@
               <label for="filtroCategoria" class="fw-semibold me-2 mb-0">Filtrar por categoria:</label>
               <select id="filtroCategoria" class="form-select" style="max-width: 200px;">
                 <option value="todos">Todos</option>
-                <option value="formacion">Formacion</option>
-                <option value="investigacion">Investigacion</option>
-                <option value="emprendimiento">Emprendimiento</option>
-                <option value="software">Software</option>
+                <option value="Formacion" selected>Formacion</option>
+                <option value="Investigacion">Investigacion</option>
+                <option value="Emprendimiento">Emprendimiento</option>
+                <option value="Software">Software</option>
               </select>
             </div>
           </div>
@@ -112,7 +113,7 @@
               </thead>
               <tbody>
                 {% for proyecto in documentos %}
-                <tr data-categorias="{{ proyecto.categorias | lower | replace(' ', '') | replace('á','a') | replace('é','e') | replace('í','i') | replace('ó','o') | replace('ú','u') }}">
+                <tr data-categorias="{{ proyecto.categorias|lower|replace(', ', ';')|replace(',', ';') }}">
                   <td>{{ proyecto.titulo }}</td>
                   <td>{{ proyecto.autores or 'N/A' }}</td>
                   <td>{{ proyecto.categorias or 'N/A' }}</td>
@@ -160,6 +161,44 @@
         }
       });
     });
-  </script>  
+  </script>
+  
+  <script>
+// 🔹 Script para cargar SOLO proyectos de "formacion" al iniciar
+document.addEventListener("DOMContentLoaded", function () {
+  const filas = document.querySelectorAll("tbody tr");
+  const filtro = "formacion"; // categoría inicial (minúsculas)
+
+  filas.forEach(fila => {
+    const categoriasAttr = fila.getAttribute("data-categorias") || "";
+    const categorias = categoriasAttr.split(";").map(cat => cat.trim().toLowerCase());
+
+    if (categorias.includes(filtro)) {
+      fila.style.display = "";
+    } else {
+      fila.style.display = "none";
+    }
+  });
+});
+
+// 🔹 Script para cambiar categorías desde el select
+document.getElementById("filtroCategoria").addEventListener("change", function () {
+  const filtro = this.value.toLowerCase(); // pasamos a minúsculas
+  const filas = document.querySelectorAll("tbody tr");
+
+  filas.forEach(fila => {
+    const categoriasAttr = fila.getAttribute("data-categorias") || "";
+    const categorias = categoriasAttr.split(";").map(cat => cat.trim().toLowerCase());
+
+    if (filtro === "todos" || categorias.includes(filtro)) {
+      fila.style.display = "";
+    } else {
+      fila.style.display = "none";
+    }
+  });
+});
+</script>
+
+  
 </body>
 </html>

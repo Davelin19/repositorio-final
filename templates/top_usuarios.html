@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Top Usuarios - Repositorio SENA</title>
+
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='img/logoSena.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+
+    <style>
+        .user-rank {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .top-user-card {
+            transition: transform 0.3s ease;
+        }
+        .top-user-card:hover {
+            transform: translateY(-5px);
+        }
+        .badge-top {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 1rem;
+            padding: 5px 10px;
+        }
+        .progress-container {
+            height: 20px;
+        }
+        .progress-bar-custom {
+            width: var(--progress-width, 0%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header d-flex align-items-center fixed-top">
+        <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+            <a href="{{ url_for('index') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+                <h1 class="sitename" style="color: #ffffff;">Repositorio SENA</h1>
+            </a>
+
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('comunidad') }}">Comunidad</a></li>
+                    {% if usuario['rol_id'] == 3 %}
+                    <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('top_usuarios') }}">Top</a></li>
+                    <li><a href="{{ url_for('reportes') }}">Reportes</a></li>
+                    <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
+                    <li class="dropdown"><a href="#"><span>Gestión</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="{{ url_for('almacenamiento') }}">Almacenamiento</a></li>
+                            <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+            
+            <div class="profile-menu-wrapper position-relative">
+                <img src="{% if usuario and usuario['foto_perfil'] %}{{ usuario['foto_perfil'] }}{% else %}{{ url_for('static', filename='img/default-profile.png') }}{% endif %}"
+                     alt="Perfil"
+                     class="profile-img"
+                     id="profileToggle"
+                     style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;">
+                
+                <div id="profileMenu" class="profile-menu d-none">
+                    <ul class="list-unstyled m-0">
+                        <li><a href="{{ url_for('perfil') }}">Mi perfil</a></li>
+                        <li><a href="{{ url_for('configuracion') }}">Configuración</a></li>
+                        <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+                        {% if usuario['rol_id'] == 3 %}
+                            <li><a href="{{ url_for('asignar') }}">Asignar roles</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+   <!-- ... (todo el <head> y header sigue igual, no lo repito por espacio) ... -->
+
+<main id="main" class="main-page">
+    <div class="container py-5">
+      <h1 class="text-center mb-5">Top Usuarios</h1>
+  
+      <!-- Gráfico de Top Usuarios por Proyectos -->
+      <div class="row mb-5">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title mb-4">Top Usuarios por Proyectos Subidos</h5>
+              <div class="chart-container" style="height: 500px; position: relative;">
+                <canvas id="topUsuariosChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Top 3 Usuarios -->
+      {% if top_usuarios and top_usuarios|length >= 3 %}
+      <div class="row">
+        <div class="col-12 mb-4">
+          <h4 class="text-center mb-4">Top 3 Usuarios Destacados</h4>
+          <div class="row">
+            {% for usuario in top_usuarios[:3] %}
+            <div class="col-md-4 mb-4">
+              <div class="card h-100 top-user-card position-relative">
+                <span class="badge bg-{{ 'warning' if loop.index == 1 else 'info' if loop.index == 2 else 'secondary' }} badge-top">
+                  #{{ loop.index }}
+                </span>
+                <div class="card-body text-center">
+                  <!-- Imagen eliminada -->
+                  <h5 class="card-title mb-1">{{ usuario.nombre }} {{ usuario.apellido }}</h5>
+                  <p class="text-muted mb-2">@{{ usuario.nombre_usuario }}</p>
+                  <span class="badge bg-{{ 'primary' if usuario.rol_id == 3 else 'success' if usuario.rol_id == 2 else 'secondary' }} mb-3">
+                    {{ 'Administrador' if usuario.rol_id == 3 else 'Instructor' if usuario.rol_id == 2 else 'Aprendiz' }}
+                  </span>
+                  <div class="d-flex justify-content-around mt-3">
+                    <div>
+                      <h6 class="mb-0">{{ usuario.total_proyectos or 0 }}</h6>
+                      <small class="text-muted">Proyectos</small>
+                    </div>
+                    <div>
+                      <h6 class="mb-0">{{ usuario.puntuacion or 0 }}</h6>
+                      <small class="text-muted">Puntuación</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </main>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Vendor JS Files -->
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/php-email-form/validate.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/purecounter/purecounter_vanilla.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"></script>
+  
+  <!-- Template Main JS File -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Cargar datos para la gráfica
+      cargarGraficaTopUsuarios();
+    });
+  
+    function cargarGraficaTopUsuarios() {
+      fetch('/api/top/usuarios')
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            const usuarios = data.data;
+            const ctx = document.getElementById('topUsuariosChart').getContext('2d');
+  
+            usuarios.sort((a, b) => b.total_proyectos - a.total_proyectos);
+  
+            const nombres = usuarios.map(u => `${u.nombre} ${u.apellido}`);
+            const proyectos = usuarios.map(u => u.total_proyectos);
+            const colores = [
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 206, 86, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(153, 102, 255, 0.7)',
+              'rgba(255, 159, 64, 0.7)',
+              'rgba(199, 199, 199, 0.7)',
+              'rgba(83, 102, 255, 0.7)',
+              'rgba(40, 159, 64, 0.7)',
+              'rgba(210, 99, 132, 0.7)'
+            ];
+  
+            new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: nombres,
+                datasets: [{
+                  label: 'Proyectos Subidos',
+                  data: proyectos,
+                  backgroundColor: colores,
+                  borderColor: colores.map(color => color.replace('0.7', '1')),
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                  x: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: 'Número de Proyectos',
+                      font: { weight: 'bold' }
+                    },
+                    ticks: {
+                      stepSize: 1,
+                      precision: 0
+                    }
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: 'Usuarios',
+                      font: { weight: 'bold' }
+                    }
+                  }
+                },
+                plugins: {
+                  legend: {
+                    display: false
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function (context) {
+                        return `Proyectos: ${context.raw}`;
+                      }
+                    }
+                  }
+                },
+                animation: {
+                  duration: 1500,
+                  easing: 'easeInOutQuart'
+                }
+              }
+            });
+          } else {
+            console.error('Error al cargar los datos:', data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error al cargar la gráfica:', error);
+        });
+    }
+  </script>
+  
